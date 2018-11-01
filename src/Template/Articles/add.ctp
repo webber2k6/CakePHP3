@@ -12,6 +12,8 @@ echo $formHelper->control('user_id', ['type' => 'hidden', 'value' => 1]);
 echo $formHelper->control('title');
 // creates textarea
 echo $formHelper->control('body', ['rows' => '3']);
+// creates select with given tags as options
+echo $formHelper->control('tags._ids', ['options' => $tags]);
 // creates button[type=submit]
 echo $formHelper->button(__('Save Article'));
 

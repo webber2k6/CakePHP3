@@ -83,7 +83,11 @@ class ArticlesController extends AppController
             $this->Flash->error(__('Unable to add your article.'));
         }
 
-        $this->set(compact('article'));
+        // Get a list of tags.
+        $tags = $this->Articles->Tags->find('list');
+
+        // set the view context
+        $this->set(compact('article', 'tags'));
         return null;
     }
 
@@ -111,7 +115,11 @@ class ArticlesController extends AppController
             $this->Flash->error(__('Unable to update your article.'));
         }
 
-        $this->set(compact('article'));
+        // Get a list of tags.
+        $tags = $this->Articles->Tags->find('list');
+
+        // set the view context
+        $this->set(compact('article', 'tags'));
         return null;
     }
 
@@ -138,5 +146,25 @@ class ArticlesController extends AppController
         }
 
         return null;
+    }
+
+    /**
+     * Finds all articles that are tagged by the given parameter values
+     *
+     * @param string[] $tags
+     */
+    public function tags(...$tags): void
+    {
+        // The 'pass' key is provided by CakePHP and contains all
+        // the passed URL path segments in the request.
+        // $tags = $this->request->getParam('pass');
+
+        // Use the ArticlesTable to find tagged articles.
+        $articles = $this->Articles->find('tagged', [
+            'tags' => $tags
+        ]);
+
+        // set the view context
+        $this->set(compact('articles', 'tags'));
     }
 }
