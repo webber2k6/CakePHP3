@@ -1,8 +1,6 @@
 <?php
 namespace App\Controller;
 
-use App\Controller\AppController;
-
 /**
  * Tags Controller
  *
@@ -46,7 +44,7 @@ class TagsController extends AppController
      *
      * @return \Cake\Http\Response|null Redirects on successful add, renders view otherwise.
      */
-    public function add()
+    public function add(): ?\Cake\Http\Response
     {
         $tag = $this->Tags->newEntity();
         if ($this->request->is('post')) {
@@ -60,6 +58,7 @@ class TagsController extends AppController
         }
         $articles = $this->Tags->Articles->find('list', ['limit' => 200]);
         $this->set(compact('tag', 'articles'));
+        return $this->render();
     }
 
     /**
@@ -67,9 +66,9 @@ class TagsController extends AppController
      *
      * @param string|null $id Tag id.
      * @return \Cake\Http\Response|null Redirects on successful edit, renders view otherwise.
-     * @throws \Cake\Network\Exception\NotFoundException When record not found.
+     * @throws \Cake\Http\Exception\NotFoundException When record not found.
      */
-    public function edit($id = null)
+    public function edit($id = null): ?\Cake\Http\Response
     {
         $tag = $this->Tags->get($id, [
             'contain' => ['Articles']
@@ -85,6 +84,7 @@ class TagsController extends AppController
         }
         $articles = $this->Tags->Articles->find('list', ['limit' => 200]);
         $this->set(compact('tag', 'articles'));
+        return $this->render();
     }
 
     /**
@@ -94,7 +94,7 @@ class TagsController extends AppController
      * @return \Cake\Http\Response|null Redirects to index.
      * @throws \Cake\Datasource\Exception\RecordNotFoundException When record not found.
      */
-    public function delete($id = null)
+    public function delete($id = null): ?\Cake\Http\Response
     {
         $this->request->allowMethod(['post', 'delete']);
         $tag = $this->Tags->get($id);

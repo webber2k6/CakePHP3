@@ -2,8 +2,11 @@
 
 namespace App\Model\Table;
 
+use App\Model\Entity\Article;
+use Cake\Event\EventInterface;
 use Cake\ORM\Query;
 use Cake\ORM\Table;
+use Cake\Utility\Text;
 use Cake\Validation\Validator;
 
 /**
@@ -30,9 +33,9 @@ class ArticlesTable extends Table
     public function validationDefault(Validator $validator): Validator
     {
         $validator
-            ->notEmpty('title')
+            ->allowEmptyString('title', false)
             ->lengthBetween('title', [10, 255])
-            ->notEmpty('body')
+            ->allowEmptyString('body', false)
             ->minLength('body', 10);
 
         return $validator;
@@ -51,9 +54,7 @@ class ArticlesTable extends Table
             'Articles.body', 'Articles.published', 'Articles.created',
             'Articles.slug',
         ];
-        $query = $query
-            ->select($columns)
-            ->distinct($columns);
+        $query->select($columns)->distinct($columns);
         if (empty($options['tags'])) {
             // If there are no tags provided, find articles that have no tags.
             $query->leftJoinWith('Tags')
@@ -65,5 +66,19 @@ class ArticlesTable extends Table
         }
 
         return $query->group(['Articles.id']);
+    }
+
+    /**
+     * @param EventInterface $event
+     * @param Article $entity
+     * @param \ArrayObject $options
+     */
+    public function beforeSave(EventInterface $event, Article $entity, \ArrayObject $options): void
+    {
+        if (!$entity->slug && $entity->isNew()) {
+            $sluggedTitle = Text::slug($entity->title);
+            // trim slug to maximum length defined in schema
+            $entity->slug = substr($sluggedTitle, 0, 191);
+        }
     }
 }

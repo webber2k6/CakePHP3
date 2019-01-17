@@ -14,7 +14,7 @@
  */
 ?>
 <!DOCTYPE html>
-<html>
+<html lang="en-US">
 <head>
     <?= $this->Html->charset() ?>
     <title>

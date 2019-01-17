@@ -17,7 +17,7 @@ use Cake\Core\Configure;
 use Cake\Core\Plugin;
 use Cake\Datasource\ConnectionManager;
 use Cake\Error\Debugger;
-use Cake\Network\Exception\NotFoundException;
+use Cake\Http\Exception\NotFoundException;
 
 $this->layout = false;
 
@@ -30,7 +30,7 @@ endif;
 $cakeDescription = 'CakePHP: the rapid development PHP framework';
 ?>
 <!DOCTYPE html>
-<html>
+<html lang="en-US">
 <head>
     <?= $this->Html->charset() ?>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -75,7 +75,7 @@ $cakeDescription = 'CakePHP: the rapid development PHP framework';
     <div class="columns large-6">
         <h4>Environment</h4>
         <ul>
-        <?php if (version_compare(PHP_VERSION, '5.6.0', '>=')) : ?>
+        <?php if (PHP_VERSION_ID >= 50600) : ?>
             <li class="bullet success">Your version of PHP is 5.6.0 or higher (detected <?= PHP_VERSION ?>).</li>
         <?php else : ?>
             <li class="bullet problem">Your version of PHP is too low. You need PHP 5.6.0 or higher to use CakePHP (detected <?= PHP_VERSION ?>).</li>
@@ -140,7 +140,7 @@ $cakeDescription = 'CakePHP: the rapid development PHP framework';
             $errorMsg = $connectionError->getMessage();
             if (method_exists($connectionError, 'getAttributes')) :
                 $attributes = $connectionError->getAttributes();
-                if (isset($errorMsg['message'])) :
+                if (isset($attributes['message'])) :
                     $errorMsg .= '<br />' . $attributes['message'];
                 endif;
             endif;
@@ -157,7 +157,7 @@ $cakeDescription = 'CakePHP: the rapid development PHP framework';
     <div class="columns large-6">
         <h4>DebugKit</h4>
         <ul>
-        <?php if (Plugin::loaded('DebugKit')) : ?>
+        <?php if (Plugin::isLoaded('DebugKit')) : ?>
             <li class="bullet success">DebugKit is loaded.</li>
         <?php else : ?>
             <li class="bullet problem">DebugKit is NOT loaded. You need to either install pdo_sqlite, or define the "debug_kit" connection name.</li>

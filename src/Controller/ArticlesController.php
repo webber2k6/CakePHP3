@@ -52,7 +52,7 @@ class ArticlesController extends AppController
     {
         // use dynamic finder findBySlug() to create a basic query that finds articles by a given slug.
         // then use firstOrFail() to either fetch the first record, or throw a NotFoundException
-        $article = $this->Articles->findBySlug($slug)->firstOrFail();
+        $article = $this->Articles->findBySlug($slug)->contain(['tags'])->firstOrFail();
         $this->set(compact('article'));
     }
 
@@ -70,7 +70,6 @@ class ArticlesController extends AppController
     {
         $article = $this->Articles->newEntity();
         // $this->request is available for every request
-        pr($this->request->getData());
         if ($this->request->is('post')) {
 
             $article = $this->Articles->patchEntity($article, $this->request->getData());
@@ -88,7 +87,7 @@ class ArticlesController extends AppController
 
         // set the view context
         $this->set(compact('article', 'tags'));
-        return null;
+        return $this->render();
     }
 
     /**
@@ -120,7 +119,7 @@ class ArticlesController extends AppController
 
         // set the view context
         $this->set(compact('article', 'tags'));
-        return null;
+        return $this->render();
     }
 
     /**
@@ -145,7 +144,7 @@ class ArticlesController extends AppController
             return $this->redirect(['action' => 'index']);
         }
 
-        return null;
+        return $this->render();
     }
 
     /**

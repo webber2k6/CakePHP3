@@ -1,4 +1,7 @@
 <?php
+/** @noinspection PhpComposerExtensionStubsInspection */
+/** @noinspection ForgottenDebugOutputInspection */
+
 use Cake\Core\Configure;
 use Cake\Error\Debugger;
 

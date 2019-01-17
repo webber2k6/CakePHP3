@@ -15,7 +15,7 @@
 namespace App\Console;
 
 if (!defined('STDIN')) {
-    define('STDIN', fopen('php://stdin', 'r'));
+    define('STDIN', fopen('php://stdin', 'rb'));
 }
 
 use Cake\Utility\Security;
@@ -32,7 +32,7 @@ class Installer
     /**
      * An array of directories to be made writable
      */
-    const WRITABLE_DIRS = [
+    private const WRITABLE_DIRS = [
         'logs',
         'tmp',
         'tmp/cache',
@@ -50,11 +50,11 @@ class Installer
      * @throws \Exception Exception raised by validator.
      * @return void
      */
-    public static function postInstall(Event $event)
+    public static function postInstall(Event $event): void
     {
         $io = $event->getIO();
 
-        $rootDir = dirname(dirname(__DIR__));
+        $rootDir = dirname(__DIR__, 2);
 
         static::createAppConfig($rootDir, $io);
         static::createWritableDirectories($rootDir, $io);
@@ -65,6 +65,7 @@ class Installer
                 if (in_array($arg, ['Y', 'y', 'N', 'n'])) {
                     return $arg;
                 }
+                /** @noinspection ThrowRawExceptionInspection */
                 throw new Exception('This is not a valid answer. Please choose Y or n.');
             };
             $setFolderPermissions = $io->askAndValidate(
@@ -85,6 +86,7 @@ class Installer
 
         $class = 'Cake\Codeception\Console\Installer';
         if (class_exists($class)) {
+            /** @noinspection PhpUndefinedMethodInspection */
             $class::customizeCodeceptionBinary($event);
         }
     }
@@ -96,7 +98,7 @@ class Installer
      * @param \Composer\IO\IOInterface $io IO interface to write to console.
      * @return void
      */
-    public static function createAppConfig($dir, $io)
+    public static function createAppConfig($dir, $io): void
     {
         $appConfig = $dir . '/config/app.php';
         $defaultConfig = $dir . '/config/app.default.php';
@@ -113,12 +115,14 @@ class Installer
      * @param \Composer\IO\IOInterface $io IO interface to write to console.
      * @return void
      */
-    public static function createWritableDirectories($dir, $io)
+    public static function createWritableDirectories($dir, $io): void
     {
         foreach (static::WRITABLE_DIRS as $path) {
             $path = $dir . '/' . $path;
             if (!file_exists($path)) {
-                mkdir($path);
+                if (!mkdir($path) && !is_dir($path)) {
+                    throw new \RuntimeException(sprintf('Directory "%s" was not created', $path));
+                }
                 $io->write('Created `' . $path . '` directory');
             }
         }
@@ -133,13 +137,13 @@ class Installer
      * @param \Composer\IO\IOInterface $io IO interface to write to console.
      * @return void
      */
-    public static function setFolderPermissions($dir, $io)
+    public static function setFolderPermissions($dir, $io): void
     {
         // Change the permissions on a path and output the results.
         $changePerms = function ($path) use ($io) {
             $currentPerms = fileperms($path) & 0777;
             $worldWritable = $currentPerms | 0007;
-            if ($worldWritable == $currentPerms) {
+            if ($worldWritable === $currentPerms) {
                 return;
             }
 
@@ -152,7 +156,7 @@ class Installer
         };
 
         $walker = function ($dir) use (&$walker, $changePerms) {
-            $files = array_diff(scandir($dir), ['.', '..']);
+            $files = array_diff(scandir($dir, SCANDIR_SORT_ASCENDING), ['.', '..']);
             foreach ($files as $file) {
                 $path = $dir . '/' . $file;
 
@@ -177,7 +181,7 @@ class Installer
      * @param \Composer\IO\IOInterface $io IO interface to write to console.
      * @return void
      */
-    public static function setSecuritySalt($dir, $io)
+    public static function setSecuritySalt($dir, $io): void
     {
         $newKey = hash('sha256', Security::randomBytes(64));
         static::setSecuritySaltInFile($dir, $io, $newKey, 'app.php');
@@ -192,14 +196,14 @@ class Installer
      * @param string $file A path to a file relative to the application's root
      * @return void
      */
-    public static function setSecuritySaltInFile($dir, $io, $newKey, $file)
+    public static function setSecuritySaltInFile($dir, $io, $newKey, $file): void
     {
         $config = $dir . '/config/' . $file;
         $content = file_get_contents($config);
 
         $content = str_replace('__SALT__', $newKey, $content, $count);
 
-        if ($count == 0) {
+        if ($count === 0) {
             $io->write('No Security.salt placeholder to replace.');
 
             return;
@@ -223,13 +227,13 @@ class Installer
      * @param string $file A path to a file relative to the application's root
      * @return void
      */
-    public static function setAppNameInFile($dir, $io, $appName, $file)
+    public static function setAppNameInFile($dir, $io, $appName, $file): void
     {
         $config = $dir . '/config/' . $file;
         $content = file_get_contents($config);
         $content = str_replace('__APP_NAME__', $appName, $content, $count);
 
-        if ($count == 0) {
+        if ($count === 0) {
             $io->write('No __APP_NAME__ placeholder to replace.');
 
             return;

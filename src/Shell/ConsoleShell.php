@@ -30,9 +30,9 @@ class ConsoleShell extends Shell
      *
      * @return int|null
      */
-    public function main()
+    public function main(): ?int
     {
-        if (!class_exists('Psy\Shell')) {
+        if (!class_exists(PsyShell::class)) {
             $this->err('<error>Unable to load Psy\Shell.</error>');
             $this->err('');
             $this->err('Make sure you have installed psysh as a dependency,');
@@ -46,7 +46,7 @@ class ConsoleShell extends Shell
             return self::CODE_ERROR;
         }
 
-        $this->out("You can exit with <info>`CTRL-C`</info> or <info>`exit`</info>");
+        $this->out('You can exit with <info>`CTRL-C`</info> or <info>`exit`</info>');
         $this->out('');
 
         Log::drop('debug');
@@ -57,6 +57,8 @@ class ConsoleShell extends Shell
 
         $psy = new PsyShell();
         $psy->run();
+
+        return self::CODE_SUCCESS;
     }
 
     /**
@@ -64,7 +66,7 @@ class ConsoleShell extends Shell
      *
      * @return \Cake\Console\ConsoleOptionParser
      */
-    public function getOptionParser()
+    public function getOptionParser(): ConsoleOptionParser
     {
         $parser = new ConsoleOptionParser('console');
         $parser->setDescription(

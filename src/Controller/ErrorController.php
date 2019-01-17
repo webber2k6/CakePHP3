@@ -27,8 +27,10 @@ class ErrorController extends AppController
      * Initialization hook method.
      *
      * @return void
+     *
+     * @throws \Exception
      */
-    public function initialize()
+    public function initialize(): void
     {
         $this->loadComponent('RequestHandler', [
             'enableBeforeRedirect' => false,

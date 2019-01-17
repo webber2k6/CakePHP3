@@ -14,25 +14,25 @@
  */
 namespace App\Test\TestCase\Controller;
 
-use App\Controller\PagesController;
-use Cake\Core\App;
 use Cake\Core\Configure;
-use Cake\Http\Response;
-use Cake\Http\ServerRequest;
-use Cake\TestSuite\IntegrationTestCase;
-use Cake\View\Exception\MissingTemplateException;
+use Cake\TestSuite\IntegrationTestTrait;
+use Cake\TestSuite\TestCase;
 
 /**
  * PagesControllerTest class
  */
-class PagesControllerTest extends IntegrationTestCase
+class PagesControllerTest extends TestCase
 {
+    use IntegrationTestTrait;
+
     /**
      * testMultipleGet method
      *
      * @return void
+     *
+     * @throws \PHPUnit\Exception
      */
-    public function testMultipleGet()
+    public function testMultipleGet(): void
     {
         $this->get('/');
         $this->assertResponseOk();
@@ -44,21 +44,25 @@ class PagesControllerTest extends IntegrationTestCase
      * testDisplay method
      *
      * @return void
+     *
+     * @throws \PHPUnit\Exception
      */
-    public function testDisplay()
+    public function testDisplay(): void
     {
         $this->get('/pages/home');
         $this->assertResponseOk();
         $this->assertResponseContains('CakePHP');
-        $this->assertResponseContains('<html>');
+        $this->assertResponseContains('<html lang="en-US">');
     }
 
     /**
      * Test that missing template renders 404 page in production
      *
      * @return void
+     *
+     * @throws \PHPUnit\Exception
      */
-    public function testMissingTemplate()
+    public function testMissingTemplate(): void
     {
         Configure::write('debug', false);
         $this->get('/pages/not_existing');
@@ -71,8 +75,10 @@ class PagesControllerTest extends IntegrationTestCase
      * Test that missing template in debug mode renders missing_template error page
      *
      * @return void
+     *
+     * @throws \PHPUnit\Exception
      */
-    public function testMissingTemplateInDebug()
+    public function testMissingTemplateInDebug(): void
     {
         Configure::write('debug', true);
         $this->get('/pages/not_existing');
@@ -87,8 +93,10 @@ class PagesControllerTest extends IntegrationTestCase
      * Test directory traversal protection
      *
      * @return void
+     *
+     * @throws \PHPUnit\Exception
      */
-    public function testDirectoryTraversalProtection()
+    public function testDirectoryTraversalProtection(): void
     {
         $this->get('/pages/../Layout/ajax');
         $this->assertResponseCode(403);

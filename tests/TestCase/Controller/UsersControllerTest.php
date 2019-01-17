@@ -2,13 +2,15 @@
 namespace App\Test\TestCase\Controller;
 
 use App\Controller\UsersController;
-use Cake\TestSuite\IntegrationTestCase;
+use Cake\TestSuite\IntegrationTestTrait;
+use Cake\TestSuite\TestCase;
 
 /**
  * App\Controller\UsersController Test Case
  */
-class UsersControllerTest extends IntegrationTestCase
+class UsersControllerTest extends TestCase
 {
+    use IntegrationTestTrait;
 
     /**
      * Fixtures
@@ -25,7 +27,7 @@ class UsersControllerTest extends IntegrationTestCase
      *
      * @return void
      */
-    public function testIndex()
+    public function testIndex(): void
     {
         $this->markTestIncomplete('Not implemented yet.');
     }
@@ -35,7 +37,7 @@ class UsersControllerTest extends IntegrationTestCase
      *
      * @return void
      */
-    public function testView()
+    public function testView(): void
     {
         $this->markTestIncomplete('Not implemented yet.');
     }
@@ -45,7 +47,7 @@ class UsersControllerTest extends IntegrationTestCase
      *
      * @return void
      */
-    public function testAdd()
+    public function testAdd(): void
     {
         $this->markTestIncomplete('Not implemented yet.');
     }
@@ -55,7 +57,7 @@ class UsersControllerTest extends IntegrationTestCase
      *
      * @return void
      */
-    public function testEdit()
+    public function testEdit(): void
     {
         $this->markTestIncomplete('Not implemented yet.');
     }
@@ -65,7 +67,7 @@ class UsersControllerTest extends IntegrationTestCase
      *
      * @return void
      */
-    public function testDelete()
+    public function testDelete(): void
     {
         $this->markTestIncomplete('Not implemented yet.');
     }

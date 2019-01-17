@@ -14,7 +14,7 @@
  */
 ?>
 <!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01//EN">
-<html>
+<html lang="en-US">
 <head>
     <title><?= $this->fetch('title') ?></title>
 </head>
